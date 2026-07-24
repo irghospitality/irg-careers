@@ -613,16 +613,50 @@ function openPanel(id) {
   }, 30);
 }
 
+var formspreeEndpoints = {
+  nexgen: 'https://formspree.io/f/mbdnzonb',
+  internship: 'https://formspree.io/f/mjgnawnq'
+};
+
 function submitForm(program, event) {
   event.preventDefault();
   var btn = event.target;
+  var formEl = btn.closest('.form-max');
+  var payload = { _subject: (program === 'nexgen' ? 'IRG NextGen Leaders Application' : 'Iconic Future Leaders Internship Application') };
+
+  formEl.querySelectorAll('.f-group').forEach(function(group) {
+    var label = group.querySelector('label');
+    var input = group.querySelector('input, select, textarea');
+    if (label && input) {
+      var key = label.textContent.replace(/[*]/g, '').trim();
+      payload[key] = input.value;
+    }
+  });
+
   btn.textContent = 'Submitting…';
   btn.disabled = true;
-  setTimeout(function() {
-    btn.textContent = 'Submitted ✓';
-    document.getElementById(program + '-success').classList.add('show');
-    document.getElementById(program + '-success').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, 800);
+
+  fetch(formspreeEndpoints[program], {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(function(res) {
+    if (res.ok) {
+      btn.textContent = 'Submitted ✓';
+      document.getElementById(program + '-success').classList.add('show');
+      document.getElementById(program + '-success').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      btn.textContent = 'Submit Application';
+      btn.disabled = false;
+      alert('Something went wrong. Please try again or email shavonne@irghospitality.com directly.');
+    }
+  })
+  .catch(function() {
+    btn.textContent = 'Submit Application';
+    btn.disabled = false;
+    alert('Something went wrong. Please try again or email shavonne@irghospitality.com directly.');
+  });
 }
 
 function handleDrop(event, inputId, nameId) {
