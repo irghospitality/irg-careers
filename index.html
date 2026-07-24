@@ -383,7 +383,13 @@ footer a { color: #C4A265; text-decoration: none; font-weight: 600; }
 
         <div class="f-label-row">Documents</div>
         <div class="f-group"><label>Resume</label>
-          <div class="upload-box"><p>Drag and drop your resume here</p><small>PDF or Word · Max 5MB</small><br><span class="upload-btn-sm">Browse Files</span></div>
+          <input type="file" accept=".pdf,.doc,.docx" style="display:none" id="nexgen-resume">
+          <div class="upload-box" onclick="document.getElementById('nexgen-resume').click()" ondragover="event.preventDefault()" ondrop="handleDrop(event,'nexgen-resume','nexgen-resume-name')">
+            <p>Drag and drop your resume here</p>
+            <small>PDF or Word · Max 5MB</small><br>
+            <span class="upload-btn-sm">Browse Files</span>
+            <p id="nexgen-resume-name" style="margin-top:8px;font-size:13px;color:#6B5230;"></p>
+          </div>
         </div>
         <div class="f-group" style="margin-top:12px;"><label>Recent graduate (within 24 months)?</label>
           <select><option value="">Select</option><option>Yes</option><option>No</option></select>
@@ -528,10 +534,22 @@ footer a { color: #C4A265; text-decoration: none; font-weight: 600; }
 
         <div class="f-label-row">Documents</div>
         <div class="f-group"><label>Resume</label>
-          <div class="upload-box"><p>Drag and drop your resume here</p><small>PDF or Word · Max 5MB</small><br><span class="upload-btn-sm">Browse Files</span></div>
+          <input type="file" accept=".pdf,.doc,.docx" style="display:none" id="intern-resume">
+          <div class="upload-box" onclick="document.getElementById('intern-resume').click()" ondragover="event.preventDefault()" ondrop="handleDrop(event,'intern-resume','intern-resume-name')">
+            <p>Drag and drop your resume here</p>
+            <small>PDF or Word · Max 5MB</small><br>
+            <span class="upload-btn-sm">Browse Files</span>
+            <p id="intern-resume-name" style="margin-top:8px;font-size:13px;color:#6B5230;"></p>
+          </div>
         </div>
         <div class="f-group" style="margin-top:12px;"><label>Unofficial Transcript <span style="font-size:11px;color:#6B5230;">(optional — encouraged)</span></label>
-          <div class="upload-box"><p>Drag and drop your transcript here</p><small>PDF · Max 5MB</small><br><span class="upload-btn-sm">Browse Files</span></div>
+          <input type="file" accept=".pdf" style="display:none" id="intern-transcript">
+          <div class="upload-box" onclick="document.getElementById('intern-transcript').click()" ondragover="event.preventDefault()" ondrop="handleDrop(event,'intern-transcript','intern-transcript-name')">
+            <p>Drag and drop your transcript here</p>
+            <small>PDF · Max 5MB</small><br>
+            <span class="upload-btn-sm">Browse Files</span>
+            <p id="intern-transcript-name" style="margin-top:8px;font-size:13px;color:#6B5230;"></p>
+          </div>
         </div>
 
         <div class="f-label-row">Essay</div>
@@ -606,6 +624,23 @@ function submitForm(program, event) {
     document.getElementById(program + '-success').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, 800);
 }
+
+function handleDrop(event, inputId, nameId) {
+  event.preventDefault();
+  var file = event.dataTransfer.files[0];
+  if (file) {
+    document.getElementById(nameId).textContent = '✓ ' + file.name;
+  }
+}
+
+document.querySelectorAll('input[type="file"]').forEach(function(input) {
+  input.addEventListener('change', function() {
+    var nameEl = document.getElementById(input.id + '-name');
+    if (nameEl && input.files[0]) {
+      nameEl.textContent = '✓ ' + input.files[0].name;
+    }
+  });
+});
 
 document.querySelectorAll('textarea').forEach(function(ta) {
   var wc = ta.nextElementSibling;
